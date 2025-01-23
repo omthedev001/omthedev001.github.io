@@ -1,1 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scratch to Reveal</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevent scrolling */
+            font-family: Arial, sans-serif;
+        }
+
+        /* Video background */
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the video covers the whole screen */
+            z-index: -1; /* Places video behind other elements */
+        }
+
+        .scratch-container {
+            position: relative;
+            width: 700px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.7); /* Add some contrast against video */
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .hidden-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            background-image: url('Happiest Birthday.jpg'); /* Replace with the actual image path */
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            line-height: 200px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Local video as background -->
+    <video class="video-background" src="Xue huā piāo piāo yi jian mei - Meme (Llama, dog, frog dancing) [4K].mp4" autoplay loop muted></video>
+
+    <div class="scratch-container">
+        <div class="hidden-content"></div>
+        <canvas id="scratchCanvas"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        const scratchContainer = document.querySelector('.scratch-container');
+
+        canvas.width = scratchContainer.offsetWidth;
+        canvas.height = scratchContainer.offsetHeight;
+
+        // Fill the canvas with gray overlay
+        ctx.fillStyle = '#aaa';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.globalCompositeOperation = 'destination-out';
+
+        let isDrawing = false;
+
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function endDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            ctx.lineWidth = 40;
+            ctx.lineCap = 'round';
+
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mouseup', endDrawing);
+        canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startDrawing(e.touches[0]);
+        });
+
+        canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            endDrawing();
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            draw(e.touches[0]);
+        });
+    </script>
+</body>
+</html>
 
